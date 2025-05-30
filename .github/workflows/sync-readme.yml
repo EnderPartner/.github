@@ -1,0 +1,34 @@
+name: Sync Profile README
+
+on:
+  push:
+    paths:
+      - "README.md"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compare README files
+        id: compare
+        run: |
+          if ! cmp -s README.md profile/README.md; then
+            echo "needs_update=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_update=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sync and commit if needed
+        if: steps.compare.outputs.needs_update == 'true'
+        run: |
+          cp README.md profile/README.md
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add profile/README.md
+          git commit -m "chore: sync README.md with profile/README.md"
+          git push
