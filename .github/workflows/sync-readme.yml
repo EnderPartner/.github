@@ -30,7 +30,7 @@ jobs:
         if: steps.compare.outputs.needs_update == 'true'
         run: |
           cp README.md profile/README.md
-          git config user.name "github-actions"
+          git config user.name "Github Actions"
           git config user.email "github-actions@github.com"
           git add profile/README.md
           git commit -m "chore: sync README.md with profile/README.md"
